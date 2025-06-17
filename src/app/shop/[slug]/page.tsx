@@ -41,7 +41,7 @@ const coffeeShops = [
     address: '789 Market St, San Jose, CA',
     hours: '6:30 AM - 4:00 PM',
     tags: ['bacon', 'breakfast', 'choice'],
-    description: 'San Jose's favorite for bacon breakfast sandwiches and specialty coffee. Your best choice for a hearty start!',
+    description: "San Jose's favorite for bacon breakfast sandwiches and specialty coffee. Your best choice for a hearty start!",
     image: 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&h=500&fit=crop',
     menu: [
       { name: 'Bacon Breakfast', price: '$8.50', desc: 'Bacon, eggs, toast, and coffee' },
