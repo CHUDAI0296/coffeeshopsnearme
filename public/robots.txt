@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.coffeeshopsnearme.xyz
+
+# Sitemaps
+Sitemap: https://www.coffeeshopsnearme.xyz/sitemap.xml
