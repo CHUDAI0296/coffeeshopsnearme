@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { FaStar, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
 import Link from 'next/link';
 import { shops } from '@/data/shops';
+import ShopImage from '@/components/ShopImage';
 
 export async function generateStaticParams() {
   return shops.map(shop => ({ slug: shop.slug }));
@@ -19,7 +20,7 @@ export default function ShopDetail({ params }: { params: { slug: string } }) {
       <div className="max-w-3xl mx-auto px-4">
         <Link href="/" className="text-blue-600 hover:underline">← Back to Home</Link>
         <div className="bg-white rounded-lg shadow p-6 mt-4">
-          <img src={shop.image} alt={shop.name} className="rounded mb-4 w-full h-64 object-cover" />
+          <ShopImage src={shop.image} alt={shop.name} className="rounded mb-4 w-full h-64 object-cover" />
           <h1 className="text-3xl font-bold mb-2">{shop.name}</h1>
           <div className="flex items-center mb-2">
             <FaStar className="text-yellow-400 mr-1" />

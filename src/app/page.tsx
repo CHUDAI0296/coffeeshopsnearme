@@ -2,6 +2,7 @@ import Link from 'next/link';
 import ImageCarousel from '@/components/ImageCarousel';
 import dynamic from 'next/dynamic';
 import { shops } from '@/data/shops';
+import ShopImage from '@/components/ShopImage';
 
 const MapView = dynamic(() => import('@/components/MapView'), { ssr: false });
 
@@ -52,7 +53,7 @@ export default function Home() {
           <div className="space-y-4">
             {topCafes.map(shop => (
               <div key={shop.slug} className="bg-white rounded-lg shadow p-4 flex flex-col">
-                <img src={shop.image} alt={shop.name} className="rounded mb-3 h-40 object-cover" />
+                <ShopImage src={shop.image} alt={shop.name} className="rounded mb-3 h-40 object-cover" />
                 <h3 className="text-lg font-bold mb-1">{shop.name}</h3>
                 <div className="flex items-center mb-1">
                   <span className="text-yellow-500 font-bold mr-2">★ {shop.rating}</span>
