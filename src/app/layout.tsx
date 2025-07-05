@@ -24,6 +24,9 @@ export default function RootLayout({
             gtag('config', 'G-WERZ70HF93');
           `,
         }} />
+        
+        {/* Google AdSense */}
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3389504348016979" crossOrigin="anonymous"></script>
       </head>
       <body>{children}</body>
     </html>
