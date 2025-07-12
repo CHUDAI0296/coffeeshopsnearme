@@ -27,6 +27,9 @@ export default function RootLayout({
         
         {/* Google AdSense */}
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3389504348016979" crossOrigin="anonymous"></script>
+
+        {/* Monetag */}
+        <script src="https://fpyf8.com/88/tag.min.js" data-zone="156899" async data-cfasync="false"></script>
       </head>
       <body>{children}</body>
     </html>
