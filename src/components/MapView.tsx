@@ -1,54 +1,79 @@
 'use client';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import { shops } from '@/data/shops';
-import { useEffect, useRef } from 'react';
 
-// 修复默认 marker 图标不显示问题
-const DefaultIcon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconAnchor: [12, 41],
-});
-L.Marker.prototype.options.icon = DefaultIcon;
+import { useState } from 'react';
+import { GoogleMap, useJsApiLoader, MarkerF, InfoWindowF } from '@react-google-maps/api';
+import { shops, Shop } from '@/data/shops';
 
-export default function MapView({ center, userLocation }: { center?: [number, number], userLocation?: { lat: number, lng: number } }) {
+const containerStyle = {
+  width: '100%',
+  height: '100%',
+};
+
+export default function MapView({ center, userLocation }: { center?: [number, number]; userLocation?: { lat: number; lng: number } }) {
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+  });
+
+  const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
+
   const validShops = shops.filter(shop => shop.latitude && shop.longitude);
-  const defaultCenter: [number, number] = [37.335480, -121.893028];
+  const defaultCenter = { lat: 37.335480, lng: -121.893028 };
+  const mapCenter = center ? { lat: center[0], lng: center[1] } : defaultCenter;
 
-  // 动态居中组件
-  function ChangeView({ center }: { center: [number, number] }) {
-    const map = useMap();
-    useEffect(() => {
-      map.setView(center);
-    }, [center, map]);
-    return null;
+  if (loadError) {
+    return <div>Map cannot be loaded right now, sorry.</div>;
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="w-full h-64 md:h-[650px] mb-8 rounded-xl overflow-hidden flex items-center justify-center bg-gray-200">
+        <p>Loading Map...</p>
+      </div>
+    );
   }
 
   return (
     <div className="w-full h-64 md:h-[650px] mb-8 rounded-xl overflow-hidden">
-      <MapContainer center={center || defaultCenter} zoom={13} style={{ width: '100%', height: '100%' }} scrollWheelZoom={true}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {center && <ChangeView center={center} />}
+      <GoogleMap mapContainerStyle={containerStyle} center={mapCenter} zoom={13}>
         {userLocation && (
-          <Marker position={[userLocation.lat, userLocation.lng]}>
-            <Popup>You are here</Popup>
-          </Marker>
+          <MarkerF
+            position={userLocation}
+            title="You are here"
+            icon={{
+              url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+              scaledSize: new window.google.maps.Size(32, 32),
+            }}
+          />
         )}
+
         {validShops.map(shop => (
-          <Marker key={shop.slug} position={[shop.latitude!, shop.longitude!]}> 
-            <Popup>
-              <strong>{shop.name}</strong><br />
-              {shop.address}<br />
-              {shop.type}
-            </Popup>
-          </Marker>
+          <MarkerF
+            key={shop.slug}
+            position={{ lat: shop.latitude!, lng: shop.longitude! }}
+            title={shop.name}
+            onClick={() => {
+              setSelectedShop(shop);
+            }}
+          />
         ))}
-      </MapContainer>
+
+        {selectedShop && selectedShop.latitude && selectedShop.longitude && (
+          <InfoWindowF
+            position={{ lat: selectedShop.latitude, lng: selectedShop.longitude }}
+            onCloseClick={() => {
+              setSelectedShop(null);
+            }}
+            options={{ pixelOffset: new window.google.maps.Size(0, -30) }}
+          >
+            <div>
+              <h3 className="font-bold">{selectedShop.name}</h3>
+              <p>{selectedShop.address}</p>
+              <p className="text-gray-500">{selectedShop.type}</p>
+            </div>
+          </InfoWindowF>
+        )}
+      </GoogleMap>
     </div>
   );
 } 
