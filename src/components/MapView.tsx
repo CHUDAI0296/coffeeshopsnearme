@@ -9,7 +9,28 @@ const containerStyle = {
   height: '100%',
 };
 
-export default function MapView({ center, userLocation }: { center?: [number, number]; userLocation?: { lat: number; lng: number } }) {
+interface NearbyShop {
+  id: number;
+  lat?: number;
+  lon?: number;
+  center?: {
+    lat: number;
+    lon: number;
+  };
+  tags: {
+    [key: string]: string;
+  };
+}
+
+export default function MapView({ 
+  center, 
+  userLocation,
+  nearbyShops,
+}: { 
+  center?: [number, number]; 
+  userLocation?: { lat: number; lng: number };
+  nearbyShops?: NearbyShop[],
+}) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
@@ -57,6 +78,27 @@ export default function MapView({ center, userLocation }: { center?: [number, nu
             }}
           />
         ))}
+
+        {nearbyShops && nearbyShops.map(shop => {
+          const position = {
+            lat: shop.lat || shop.center!.lat,
+            lng: shop.lon || shop.center!.lon,
+          };
+          return (
+            <MarkerF
+              key={`osm-${shop.id}`}
+              position={position}
+              title={shop.tags.name || 'Nearby Place'}
+              icon={{
+                url: 'https://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+                scaledSize: new window.google.maps.Size(32, 32),
+              }}
+              onClick={() => {
+                // Future implementation: show InfoWindow for OSM shops
+              }}
+            />
+          );
+        })}
 
         {selectedShop && selectedShop.latitude && selectedShop.longitude && (
           <InfoWindowF

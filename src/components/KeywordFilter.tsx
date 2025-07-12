@@ -23,9 +23,10 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
 
 interface KeywordFilterProps {
   onUserLocation?: (loc: { lat: number; lng: number }) => void;
+  onNearbyShopsFound?: (shops: any[]) => void;
 }
 
-export default function KeywordFilter({ onUserLocation }: KeywordFilterProps) {
+export default function KeywordFilter({ onUserLocation, onNearbyShopsFound }: KeywordFilterProps) {
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{lat: number; lng: number} | null>(null);
   const [locating, setLocating] = useState(false);
@@ -111,8 +112,14 @@ export default function KeywordFilter({ onUserLocation }: KeywordFilterProps) {
         .then(data => {
           if (data.elements) {
             setOsmShops(data.elements);
+            if (onNearbyShopsFound) {
+              onNearbyShopsFound(data.elements);
+            }
           } else {
             setOsmShops([]);
+            if (onNearbyShopsFound) {
+              onNearbyShopsFound([]);
+            }
             setOsmError('No shops found nearby.');
           }
           setOsmLoading(false);
